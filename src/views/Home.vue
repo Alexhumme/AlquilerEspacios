@@ -5,8 +5,6 @@ import { Post } from '@/service'
 import { Timestamp } from "@firebase/firestore";
 
 
-let eventoDate = Timestamp.fromDate(new Date());
-
 export default {
   name: 'Home',
   components: { Alquiler },

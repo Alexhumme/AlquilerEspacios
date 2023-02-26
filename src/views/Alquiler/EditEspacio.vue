@@ -136,7 +136,7 @@
 
       <el-form-item>
         <el-button type="primary" @click="submit">Crear</el-button>
-        <el-button>Cancelar</el-button>
+        <el-button @click="handleCancel">Cancelar</el-button>
       </el-form-item>
     </el-form>
     </el-card>
@@ -149,6 +149,11 @@
   import { Post } from '@/service'
   
   export default {
+    methods:{
+        handleCancel(){
+            this.$router.push('/')
+        }
+    },
     setup() {
       const router = useRouter()
       const route = useRoute()

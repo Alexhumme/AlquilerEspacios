@@ -13,7 +13,7 @@ export default {
   },
   create: post => addDoc(collection(db, colection), post),
   update: (id, post) => setDoc(doc(db, colection, id), post),
-  delete: id => deleteDoc(doc(db, colection, id))
+  delete: async id => await deleteDoc(doc(db, colection, id))
 }
 
 /* export const createPost = (post) => {

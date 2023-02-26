@@ -1,59 +1,86 @@
 <template>
-  <el-form-item
-    label="Email"
-  >
-    <el-input  v-model="email"/>
-  </el-form-item>
-  
-  <el-form-item label="Contraseña">
-    <el-input v-model="contrasena" />
-  </el-form-item>
+  <el-card class="box-card">
+    <template #header>
+      <div class="card-header">
+        <span>INGRESE</span>
+        <el-button class="button" text>o registrese</el-button>
+      </div>
+    </template>
+    <el-form autocomplete="on" status-icon label-width="120px">
+      <el-form-item label="Email" :model="user">
+        <el-input v-model="user.email" />
+      </el-form-item>
 
-  <p v-if="errMsg">{{ errMsg }}</p>
+      <el-form-item label="Contraseña">
+        <el-input v-model="user.contrasenia" />
+      </el-form-item>
 
-  <el-form-item>
-    <el-button type="primary" @click="register">Entrar</el-button>
-    <el-button type="primary" @click="signInWithGoogle">Entrar con Google</el-button>
-  </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="login">Entrar</el-button>
+        <el-button type="primary" @click="signInWithGoogle">Entrar con Google</el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
 </template>
 
+<script>
+//import { ref, reactive } from 'vue'
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { ElMessage } from 'element-plus'
 
-<script setup>
-import { ref } from 'vue'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { useRouter } from 'vue-router'
-
-const email = ref("");
-const contrasena = ref("");
-const errMsg = ref(); //Mensajes de errores generados por firebase
-const router = useRouter(); //Obtiene una referencia del router de vue
-
-const register = () => {
-  console.log("uhm")
-  signInWithEmailAndPassword(getAuth(), email.value, contrasena.value)
-    .then((data) => {
-      console.log("Registrado satisfactoriamente")
-      router.push('/')
-    }).catch((error) => {
-      console.log(error.code);
-      switch ( error.code ) {
-        case "auth/invalid-email":
-          errMsg.value = "Email invalido"
-          break;
-        case "auth/user-not-found":
-          errMsg.value = "El correo con la contraseña no fueron encontrados"
-          break;
-        case "auth/wrong-password":
-          errMsg.value = "Contraseña incorrecta"
-          break;
-        default:
-          errMsg.value = "Correo o contraseña incorrecto"
-          break;
-      }
-    })
-}
-
-const signInWithGoogle = () => {
-
-}
+export default {
+  data() {
+    return {
+      user: {
+        email: "",
+        contrasenia: "",
+      },
+      errMsg: "",
+    };
+  },
+  methods: {
+    login() {
+      console.log("uhm");
+      signInWithEmailAndPassword(
+        getAuth(),
+        this.user.email,
+        this.user.contrasenia
+      )
+        .then((data) => {
+          console.log("Ingresado satisfactoriamente");
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          console.log(error.code);
+          switch (error.code) {
+            case "auth/invalid-email":
+              this.errMsg = "Email invalido";
+              break;
+            case "auth/user-not-found":
+              this.errMsg = "El correo con la contraseña no fueron encontrados";
+              break;
+            case "auth/wrong-password":
+              this.errMsg = "Contraseña incorrecta";
+              break;
+            default:
+              this.errMsg = "Correo o contraseña incorrecto";
+              break;
+          }
+          ElMessage.error(this.errMsg)
+        });
+    },
+    signInWithGoogle() { },
+  },
+};
 </script>
+<style>
+#app,
+body {
+  height: 100%;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>

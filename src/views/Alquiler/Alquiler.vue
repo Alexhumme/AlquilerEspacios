@@ -1,7 +1,7 @@
 <template>
 
-    <el-table :data="posts" style="width: 100%">
-      <el-table-column label="Fecha Evento" prop="fechaSolicitud" /> -->
+    <!-- <el-table :data="posts" style="width: 100%">
+      <el-table-column label="Fecha Evento" prop="fechaSolicitud" />
       <el-table-column label="Cliente" prop="solicitante" />
       <el-table-column label="Dirección" prop="direccion" />
       <el-table-column label="Telefono" prop="telefono" />
@@ -18,14 +18,14 @@
           <el-button
             size="small"
             type="danger"
-            @click="deletePost(id)"
+            @click="deletePost"
             >Borrar</el-button
           >
         </template>
       </el-table-column>
-    </el-table>
+    </el-table> -->
 
-    <!-- <div class="card mt-4">
+    <div class="card mt-4">
     <table class="table m-0">
       <thead>
         <tr>
@@ -38,26 +38,26 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="{ id, fechaSolicitud, cliente, direccion, telefono, valor  } in posts" :key="id">
-          <td>{{ fechaSolicitud }}</td>
-          <td>{{ cliente }}</td>
-          <td>{{ direccion }}</td>
-          <td>{{ telefono }}</td>
-          <td>{{ valor }}</td>
+        <tr v-for="post in posts" :key="id">
+          <td>{{ post.fechaSolicitud }}</td>
+          <td>{{ post.cliente }}</td>
+          <td>{{ post.direccion }}</td>
+          <td>{{ post.telefono }}</td>
+          <td>{{ post.valor }}</td>
           <td>
-            <router-link :to="`/edit/${id}`">
+            <router-link :to="`/edit/${post.id}`">
               <button class="btn btn-primary btn-sm me-2">
                 Edit
               </button>
             </router-link>
-            <button class="btn btn-danger btn-sm" @click="deletePost(id)">
+            <button class="btn btn-danger btn-sm" @click="printPost(post)">
               Delete
             </button>
           </td>
         </tr>
       </tbody>
     </table>
-  </div> -->
+  </div>
 
   </template>
   
@@ -74,6 +74,11 @@
     data () {
       return {
         title: 'List post'
+      }
+    },
+    methods: {
+      printPost(post){
+        console.log(post)
       }
     },
     setup: () => {
