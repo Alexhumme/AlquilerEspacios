@@ -45,12 +45,10 @@
           <td>{{ post.telefono }}</td>
           <td>{{ post.valor }}</td>
           <td>
-            <router-link :to="`/edit/${post.id}`">
-              <button class="btn btn-primary btn-sm me-2">
-                Edit
-              </button>
-            </router-link>
-            <button class="btn btn-danger btn-sm" @click="printPost(post)">
+            <button class="btn btn-primary btn-sm me-2" @click="toPDF(post.id)">
+              Generar PDF
+            </button>
+            <button class="btn btn-danger btn-sm" @click="printPost(post.id)">
               Delete
             </button>
           </td>
@@ -63,6 +61,8 @@
   
   <script>
   import { Post } from '@/service'
+  import { jsPDF } from "jspdf";
+  import autoTable from 'jspdf-autotable'
 
   export default {
     props: {
@@ -73,12 +73,97 @@
     },
     data () {
       return {
-        title: 'List post'
+        prestamo: []
       }
     },
     methods: {
-      printPost(post){
-        console.log(post)
+      async printPost(post){
+        try {
+          console.log("eliminando", post)
+          await Post.delete(post)
+        }catch( e ) {
+          console.log(e);
+        }
+      },
+      async toPDF(id) {
+        var vm = this
+        var columns = [
+          {title: "Titulo", dataKey: "Contenido"}
+        ];
+        var doc = new jsPDF('p', 'pt');
+
+        doc.text('FORMATO DE PRÉSTAMO DE ESPACIOS INSTITUCIONALES', 80, 40);
+
+        const data = await Post.find(id)
+        const result = Object.entries(data)
+        doc.setFontSize(12)
+
+        const [espacioSoli] = result.filter(result=> result[0]==="espacioSolicitado")
+        doc.text(`Espacio Solicitado: ${espacioSoli[1]}`, 30, 120);
+
+        const [fechaSoli] = result.filter(result=> result[0]==="fechaSolicitud")
+        doc.text(`Fecha Solicitud: ${fechaSoli[1]}`, 30, 150);
+
+        const [fechaEvento] = result.filter(result=> result[0]==="fechaEvento")
+        doc.text(`Fecha Evento: ${fechaEvento[1]}`, 30, 180);
+
+        const [horaInicio] = result.filter(result=> result[0]==="horaInicio")
+        doc.text(`Fecha Evento: ${horaInicio[1]}`, 30, 210);
+
+        const [horaFinal] = result.filter(result=> result[0]==="horaFinal")
+        doc.text(`Fecha Evento: ${horaFinal[1]}`, 30, 240);
+
+        const [valAlquiler] = result.filter(result=> result[0]==="valor")
+        doc.text(`Valor Alquiler: ${valAlquiler[1]}`, 30, 270);
+
+        const [contraprestacion] = result.filter(result=> result[0]==="contraprestacion")
+        doc.text(`Contraprestacion: ${contraprestacion[1]}`, 30, 300);
+
+        const datosPersonales = result.filter((result) => {
+          return (
+            result[0] === "correo" ||
+            result[0] === "empresa" ||
+            result[0] === "telefono" ||
+            result[0] === "solicitante" ||
+            result[0] === "documento"
+          );
+        });
+        doc.autoTable({
+          head: columns,
+          body: datosPersonales,
+          startY: 340,
+          // Default for all columns
+          styles: { overflow: 'ellipsize', cellWidth: 'wrap' },
+          // Override the default above for the text column
+          columnStyles: { text: { cellWidth: 'auto' } },
+        });
+
+        const checklist = result.filter((result) => {
+          return (
+            result[0] === "aire" ||
+            result[0] === "iluminacion" ||
+            result[0] === "paredes" ||
+            result[0] === "pisos" ||
+            result[0] === "puertas" ||
+            result[0] === "sanitarios"
+          );
+        });
+        doc.autoTable({
+          head: columns,
+          body: checklist,
+          startY: doc.lastAutoTable.finalY + 15,
+          rowPageBreak: 'auto',
+          bodyStyles: { valign: 'top' }, 
+        });
+
+
+        doc.text("Observación: En ningún caso el usuario podrá colocar clavos, tornillos, cintas pegantes, ni pegamento sobre las paredes o muros. Esto para evitar el daño general y deterioro de la pintura. El usuario deberá responder por cualquier daño o pérdida parcial o total, será su responsabilidad devolver el espacio en buen estado y limpio.", 30, 270);
+
+        doc.text("Contraprestacion", 30, 300);
+        doc.text(`Contraprestacion: ${contraprestacion[1]}`, 30, 300);
+
+
+        doc.save('todos.pdf');
       }
     },
     setup: () => {

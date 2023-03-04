@@ -19,6 +19,7 @@ export default {
       //console.log(doc.data().fechaSolicitud.Timestamp.toDate())
       //console.log(Timestamp.fromDate(doc.data().fechaSolicitud).toDate())
       //YYYYconsole.log(doc.data().fechaSolicitud.timestamp.toDate())
+      //return {...doc.data(), fechaSolicitud: new Intl.DateTimeFormat(['ban', 'id']).format(doc.data().fechaSolicitud.toDate()), id: doc.id}
       return {...doc.data(), fechaSolicitud: new Intl.DateTimeFormat(['ban', 'id']).format(doc.data().fechaSolicitud.toDate()), id: doc.id}
     })
   },

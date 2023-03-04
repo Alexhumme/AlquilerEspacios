@@ -12,7 +12,7 @@
     <el-form :model="form" label-width="120px">
       
         <el-form-item label="Espacio solicitado">
-            <el-input v-model="form.espacioSolicitado" />
+            <el-input v-model="form.espacioSolicitado" value=""/>
         </el-form-item>
         <el-form-item label="Fecha de solicitud">
             <el-col :span="20">
