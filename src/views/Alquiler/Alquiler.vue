@@ -26,7 +26,7 @@
     </el-table> -->
 
     <div class="card mt-4">
-    <table class="table m-0">
+    <table class="table m-0 table">
       <thead>
         <tr>
           <th >Fecha Evento</th>
@@ -34,23 +34,23 @@
           <th >Direccion</th>
           <th >Telefono</th>
           <th >Valor</th>
-          <th >Action</th>
+          <th ></th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="post in posts" :key="id">
           <td>{{ post.fechaSolicitud }}</td>
-          <td>{{ post.cliente }}</td>
+          <td>{{ post.solicitante }}</td>
           <td>{{ post.direccion }}</td>
           <td>{{ post.telefono }}</td>
           <td>{{ post.valor }}</td>
-          <td>
-            <button class="btn btn-primary btn-sm me-2" @click="toPDF(post.id)">
+          <td class="opciones">
+            <el-button class="btn btn-primary btn-sm me-2" @click="toPDF(post.id)" type="info">
               Generar PDF
-            </button>
-            <button class="btn btn-danger btn-sm" @click="printPost(post.id)">
+            </el-button>
+            <el-button class="btn btn-danger btn-sm" @click="printPost(post.id)" type="danger" :icon="Delete">
               Delete
-            </button>
+            </el-button>
           </td>
         </tr>
       </tbody>
@@ -64,6 +64,7 @@
   import { jsPDF } from "jspdf";
   import autoTable from 'jspdf-autotable'
   import moment from 'moment'
+  import { Delete } from '@element-plus/icons-vue'
 
   export default {
     props: {
@@ -78,11 +79,6 @@
       }
     },
     methods: {
-      toLocalTime(timeStampObj){
-        const date = (new Date(timeStampObj.seconds)).toLocaleString()
-        
-        return date
-      },
       async printPost(post){
         try {
           console.log("eliminando", post)
@@ -124,18 +120,17 @@
         doc.rect(marginR+((((pdfWidth-marginR*2)/3))*2)+0.5, 5.3, ((pdfWidth-marginR*2)/3)-0.5, 1.3)
 
         const [fechaSoli] = result.filter(result=> result[0]==="fechaSolicitud")
-        doc.text(`Fecha Solicitud: ${this.toLocalTime(fechaSoli[1])}`, marginR+0.53, 6);
+        doc.text(`Fecha Solicitud: ${moment(fechaSoli[1].toDate()).format('L')}`, marginR+0.53, 6);
 
         const [fechaEvento] = result.filter(result=> result[0]==="fechaEvento")
-        doc.text(`Fecha Evento: ${fechaEvento[1]}`, marginR+(((pdfWidth-marginR*2)/3))+0.53, 6);
-  
-        console.log(moment().get(fechaEvento[1].seconds).toLocaleString())
+        doc.text(`Fecha Evento: ${moment(fechaEvento[1].toDate()).format('L')}`, marginR+(((pdfWidth-marginR*2)/3))+0.53, 6);
+
 
         const [horaInicio] = result.filter(result=> result[0]==="horaInicio")
-        doc.text(`hora inicio: ${this.toLocalTime(horaInicio[1])}`, marginR+((((pdfWidth-marginR*2)/3))*2)+0.7, 5.8);
+        doc.text(`hora inicio: ${moment(horaInicio[1].toDate()).format('LTS')}`, marginR+((((pdfWidth-marginR*2)/3))*2)+0.7, 5.8);
 
         const [horaFinal] = result.filter(result=> result[0]==="horaFinal")
-        doc.text(`hora fin: ${this.toLocalTime(horaFinal[1])}`, marginR+((((pdfWidth-marginR*2)/3))*2)+0.7, 6.3);
+        doc.text(`hora fin: ${moment(horaFinal[1].toDate()).format('LTS')}`, marginR+((((pdfWidth-marginR*2)/3))*2)+0.7, 6.3);
         
         //
 
@@ -280,7 +275,7 @@ Quien recibe: ____________________________________________________________
 # de Cedula y Teléfono: ____________________________________________________
           `, marginR+0.5, 27.44)
 
-        doc.save('todos.pdf');
+        doc.save(`${espacioSoli[1]}_${datosPersonales.solicitante}.pdf`);
         };
       }
     },
@@ -363,4 +358,21 @@ Quien recibe: ____________________________________________________________
     },
   ] */
   </script>
+<style scoped>
+.table{
+  width: 100%;
+  font-size: small;
+  color: rgb(87, 87, 87);
+  text-align: left;
+}
+.table tr{
+  box-shadow: 0px 1px rgb(219, 219, 219);
+}
+.table td, th{
   
+  padding: 10px 0px;
+}
+.table .opciones{
+  text-align: right;
+}
+</style>
