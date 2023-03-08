@@ -16,9 +16,6 @@
         </el-menu-item>
       <el-sub-menu index="3">
         <template #title>Cuenta</template>
-        <el-menu-item index="2-1">
-            <RouterLink to="/about">About</RouterLink>
-        </el-menu-item>
         <el-menu-item index="2-2">
           <a @click="logout" v-if="isLoggedIn">Salir</a>
         </el-menu-item>
@@ -68,6 +65,9 @@
   .banner {
     height: 50px;
     width:350px
+  }
+  .el-header{
+    margin-bottom: 20px;
   }
   </style>
   

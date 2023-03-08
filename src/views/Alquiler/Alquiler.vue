@@ -82,6 +82,7 @@ export default {
       try {
         console.log("eliminando", post)
         await Post.delete(post)
+
       }catch( e ) {
         console.log(e);
       }
